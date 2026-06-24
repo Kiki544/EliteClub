@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@theme {
+  --color-green-950: #071a0e;
+  --color-green-900: #0a3318;
+  --color-green-800: #0f3d22;
+  --color-green-700: #1a5c34;
+  --color-green-600: #2e7d52;
+  --color-green-500: #3b9469;
+  --color-green-400: #5aad85;
+  --color-green-200: #aeddc2;
+  --color-green-100: #daf0e3;
+  --color-green-50: #f2faf4;
+
+  --color-gold-600: #a07a28;
+  --color-gold-500: #c9a84c;
+  --color-gold-400: #d4b96a;
+  --color-gold-100: #f5edd3;
+  --color-gold-50: #faf6e9;
+
+  --color-surface: #f7f9f7;
+  --color-text-primary: #0f1f14;
+  --color-text-secondary: #3d5246;
+  --color-text-muted: #6b8475;
+
+  --font-display: var(--font-outfit);
+  --font-body: var(--font-dm-sans);
+
+  --radius-card: 12px;
+  --radius-btn: 8px;
+  --radius-pill: 9999px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
