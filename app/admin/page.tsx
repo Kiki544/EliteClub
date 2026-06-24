@@ -81,7 +81,7 @@ export default function AdminPage() {
     // Seed publications
     const stored = localStorage.getItem("eca_publications");
     if (stored) {
-      setPubs(JSON.parse(stored));
+      try { setPubs(JSON.parse(stored)); } catch { localStorage.removeItem("eca_publications"); }
     } else {
       const seeded: PubEntry[] = PUBLICATIONS.map((p, i) => ({
         id: String(i),
@@ -96,7 +96,9 @@ export default function AdminPage() {
 
     // Load applications
     const apps = localStorage.getItem("eca_member_applications");
-    if (apps) setApplications(JSON.parse(apps));
+    if (apps) {
+      try { setApplications(JSON.parse(apps)); } catch { localStorage.removeItem("eca_member_applications"); }
+    }
   }, [authed]);
 
   const login = () => {
