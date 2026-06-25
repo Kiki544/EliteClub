@@ -1,17 +1,8 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
+import NigeriaMapWrapper from "@/components/ui/NigeriaMapWrapper";
 import { STATES, STATS } from "@/lib/data";
 import { MapPin, Users } from "@phosphor-icons/react/dist/ssr";
-
-const NigeriaMap = dynamic(() => import("@/components/ui/NigeriaMap"), {
-  ssr: false,
-  loading: () => (
-    <div className="rounded-card bg-green-50 border border-green-200 h-96 flex items-center justify-center">
-      <p className="text-green-500 text-sm animate-pulse">Loading map…</p>
-    </div>
-  ),
-});
 
 export const metadata: Metadata = { title: "Where We Work" };
 
@@ -64,7 +55,7 @@ export default function PresencePage() {
             </h2>
           </RevealOnScroll>
           <RevealOnScroll delay={0.05}>
-            <NigeriaMap />
+            <NigeriaMapWrapper />
           </RevealOnScroll>
         </div>
       </section>
