@@ -3,11 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import { PROGRAMMES } from "@/lib/data";
-import { GraduationCap, Drop, ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { GraduationCap, Drop, Briefcase, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 
 export const metadata: Metadata = { title: "Our Programmes" };
 
-const ICONS: Record<string, React.ElementType> = { GraduationCap, Drop };
+const ICONS: Record<string, React.ElementType> = { GraduationCap, Drop, Briefcase };
 
 export default function ProgrammesPage() {
   return (
@@ -18,7 +18,7 @@ export default function ProgrammesPage() {
             Our Programmes
           </h1>
           <p className="text-green-100 text-lg max-w-[54ch]">
-            We concentrate on two areas where focused investment produces the most durable change.
+            We concentrate on three areas where focused investment produces the most durable change.
           </p>
         </div>
       </div>

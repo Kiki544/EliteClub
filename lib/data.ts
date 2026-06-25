@@ -1,8 +1,8 @@
 export const STATS = [
   { label: "Beneficiaries Reached", value: 12450, suffix: "+" },
-  { label: "States Active", value: 8, suffix: "" },
+  { label: "States Active", value: 9, suffix: "" },
   { label: "Years of Service", value: 15, suffix: "" },
-  { label: "Programmes Running", value: 2, suffix: "" },
+  { label: "Programmes Running", value: 3, suffix: "" },
 ];
 
 export const PROGRAMMES = [
@@ -35,7 +35,7 @@ export const PROGRAMMES = [
         achieved: 97,
       },
     ],
-    partners: ["[Partner Organisation A]", "[Partner Organisation B]", "[State Ministry of Education]"],
+    partners: ["YEDIS", "One Community, One-Industry Initiative", "[State Ministry of Education]"],
     caseStudy: {
       name: "[Beneficiary Name]",
       location: "Ogun State",
@@ -82,9 +82,80 @@ export const PROGRAMMES = [
       image: "https://picsum.photos/seed/community-water-point-nigeria/400/500",
     },
   },
+  {
+    slug: "empowerment",
+    title: "Empowerment",
+    icon: "Briefcase",
+    tagline: "Building economic independence through vocational skills and enterprise grants",
+    description:
+      "Our Empowerment programme equips community members and young artisans with practical trade skills and startup capital to build sustainable livelihoods. Training spans agro-allied processing, digital literacy, marketing, and business development — delivered through biennial conventions and partnerships with organisations such as YEDIS.",
+    keyResult: "328+ participants trained, ₦1M+ in business grants awarded",
+    image: "https://picsum.photos/seed/vocational-training-nigeria-women/800/600",
+    objectives: [
+      {
+        title: "Agro-Allied Vocational Training",
+        activities: ["Coconut oil & shea butter processing", "Black soap & locust beans production", "Snail farming & agro-waste conversion", "Hand sanitizer & mouthwash formulation"],
+        target: 200,
+        achieved: 200,
+      },
+      {
+        title: "Entrepreneurship & Business Skills",
+        activities: ["Marketing fundamentals & product branding", "Digital technology & AI for business", "Business proposal writing & venture funding", "Leadership development"],
+        target: 128,
+        achieved: 128,
+      },
+      {
+        title: "Business Starter Grants",
+        activities: ["Small-scale business launch grants", "Raffle-based grant disbursement to artisans", "Post-training community mentoring"],
+        target: 53,
+        achieved: 53,
+      },
+    ],
+    partners: ["YEDIS", "One Community, One-Industry Initiative", "Osun State Ministry of Commerce, Industries, Cooperatives and Empowerment", "Afro Pride Art Collection"],
+    caseStudy: {
+      name: "[Workshop Participant]",
+      location: "Aagba, Osun State",
+      story:
+        "After completing the 3-day agro-allied skills training, [Name] used her empowerment grant to start a black soap production business from her home. Within six months she was supplying three local markets and had trained two neighbours in the same skill.",
+      image: "https://picsum.photos/seed/woman-entrepreneur-nigeria-soap/400/500",
+    },
+  },
 ];
 
 export const NEWS_ARTICLES = [
+  {
+    slug: "yedis-artisan-empowerment-2024",
+    title: "128 Young Artisans Empowered with Skills and Grants in Aagba",
+    category: "Partnership Update",
+    date: "March 9, 2024",
+    author: "Elite Club of Aagba",
+    excerpt:
+      "In partnership with YEDIS, the Club supported a one-day entrepreneurship workshop for 128 artisans in Aagba, disbursing ₦1 million in business grants to 20 recipients.",
+    image: "https://picsum.photos/seed/artisan-workshop-nigeria-grants/800/500",
+    featured: true,
+    body: [
+      "On 9 March 2024, the Elite Club of Aagba partnered with YEDIS (Youth Empowerment and Development Initiative for Sustainability — a UN Sustainable Development Solution Network member) to host a one-day Entrepreneurship and Capacity-Building Workshop for underserved artisans in Aagba Community, Osun State.",
+      "128 artisans attended — 76 women and girls, and 52 men — drawn from trades including plumbing, electrical work, computer and phone repairs, bricklaying, welding, fashion design, hairstyling, and farming. Training was delivered in both English and Yoruba, covering marketing fundamentals, product branding, digital technology, AI introduction, climate change effects on business, venture funding, leadership, and business proposal writing.",
+      "The programme, valued at ₦2.1 million, disbursed ₦1 million in business starter grants to 20 raffle winners. Additional donations came from King Rufus Olayinka Ogunwole Kuujosin I, the Alaagba of Aagba (₦250,000), and Afro Pride Art Collection (₦390,000 in foodstuffs). Club President Obafemi Okediya joined government representatives Hon. Rasheed Aderibigbe, Hon. Bayo Ogungbangbe, and Hon. Soji Ajeigbe at the ceremony.",
+    ],
+  },
+  {
+    slug: "empowerment-training-200-indigenes-2021",
+    title: "Elite Club Trains 200 Indigenes in Agro-Allied Skills at 2nd Biennial Convention",
+    category: "Field Update",
+    date: "May 22, 2021",
+    author: "Elite Club of Aagba",
+    excerpt:
+      "A 3-day empowerment training in Aagba equipped 200 selected community members with agro-allied vocational skills, with 33 graduates receiving business starter grants at a ceremony attended by Osun State government officials.",
+    image: "https://picsum.photos/seed/vocational-training-nigeria-community/800/500",
+    featured: false,
+    body: [
+      "The Elite Club of Aagba held a 3-day vocational empowerment and training programme from 20–22 May 2021 in Aagba, Boripe Local Government Area, Osun State, bringing together 200 selected community indigenes.",
+      "The training — part of the Club's 2nd Biennial Convention themed 'Engendering Economic Sustainability through Improved Agro-Allied Business Processes' — covered coconut oil processing, black soap making, locust beans processing, snail farming, shea butter production, charcoal-based mouthwash, hand sanitizer manufacturing, and agro-waste conversion.",
+      "At the closing ceremony held at Julius Olayemi Hall, St. Anthony's Catholic Church on 22 May, 33 trainees received empowerment grants to launch small-scale businesses. The event was attended by the Osun State Commissioner for Commerce, Industries, Cooperatives and Empowerment, Hon. (Dr.) Henry Olabode Olanipekun, and the Commissioner for Local Government and Chieftaincy Affairs, Prince Adebayo Adeleke.",
+      "The programme was delivered in partnership with the One Community, One-Industry Initiative. Convention planning was chaired by Obafemi Okediya.",
+    ],
+  },
   {
     slug: "wash-borehole-kwara-2026",
     title: "New Borehole Brings Safe Water to 1,400 Residents in Kwara State",
@@ -137,10 +208,10 @@ export const NEWS_ARTICLES = [
 
 export const TEAM_MEMBERS = [
   {
-    name: "[Executive Director Name]",
-    title: "Executive Director",
+    name: "Obafemi Okediya",
+    title: "Club President",
     department: "Leadership",
-    bio: "Fifteen years of community development experience across West Africa. Previously served as Programme Director at [Organisation].",
+    bio: "Community leader and current President of the Elite Club of Aagba. Chaired the 2nd Biennial Convention Planning Committee and has led the Club's Empowerment programme, including the 2021 agro-allied skills training and the 2024 YEDIS artisan empowerment partnership.",
     image: "https://picsum.photos/seed/professional-man-nigeria-executive/300/300",
   },
   {
@@ -202,6 +273,7 @@ export const TRUSTEES = [
 ];
 
 export const STATES = [
+  { name: "Osun", programmes: ["Education", "Empowerment"], beneficiaries: 420, representative: "Obafemi Okediya", summary: "Home base of the Club in Aagba, Boripe LGA. 200 indigenes trained in agro-allied skills (2021); 128 young artisans empowered through the YEDIS partnership with ₦1M in grants (2024)." },
   { name: "Lagos", programmes: ["Education"], beneficiaries: 2100, representative: "[State Rep Name]", summary: "Urban education scholarships and teacher training in low-income communities." },
   { name: "Kwara", programmes: ["WASH"], beneficiaries: 1950, representative: "[State Rep Name]", summary: "Borehole drilling and sanitation in Edu and Moro LGAs." },
   { name: "Ogun", programmes: ["Education", "WASH"], beneficiaries: 1800, representative: "[State Rep Name]", summary: "Dual programme state - classroom construction and water point rehabilitation." },

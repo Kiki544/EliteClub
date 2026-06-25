@@ -5,11 +5,12 @@ import AnimatedCounter from "@/components/ui/AnimatedCounter";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import PartnerMarquee from "@/components/ui/PartnerMarquee";
 import { STATS, PROGRAMMES, NEWS_ARTICLES } from "@/lib/data";
-import { GraduationCap, Drop, ArrowRight, CalendarBlank } from "@phosphor-icons/react/dist/ssr";
+import { GraduationCap, Drop, Briefcase, ArrowRight, CalendarBlank } from "@phosphor-icons/react/dist/ssr";
 
 const PROGRAMME_ICONS: Record<string, React.ElementType> = {
   GraduationCap,
   Drop,
+  Briefcase,
 };
 
 export default function HomePage() {
@@ -42,7 +43,7 @@ export default function HomePage() {
                 What we do
               </h2>
               <p className="text-text-secondary text-lg max-w-[52ch]">
-                Two focused programme areas where we concentrate resources for maximum, measurable impact.
+                Three focused programme areas where we concentrate resources for maximum, measurable impact.
               </p>
             </div>
           </RevealOnScroll>
