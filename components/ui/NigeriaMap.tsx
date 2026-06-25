@@ -14,10 +14,7 @@ type GeoFeature = {
   };
 };
 
-const GEO_URLS = [
-  "https://raw.githubusercontent.com/wmgeolab/geoBoundaries/main/releaseData/gbOpen/NGA/ADM1/geoBoundaries-NGA-ADM1.geojson",
-  "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/nigeria.geojson",
-];
+const GEO_URL = "/nigeria-states.geojson";
 
 // Nigeria bounding box (degrees)
 const LON_MIN = 2.668, LON_MAX = 14.680;
@@ -68,26 +65,11 @@ export default function NigeriaMap() {
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      for (const url of GEO_URLS) {
-        try {
-          const res = await fetch(url);
-          if (!res.ok || cancelled) continue;
-          const data = await res.json();
-          if (!cancelled) {
-            setFeatures(data.features ?? []);
-            setLoading(false);
-          }
-          return;
-        } catch {
-          /* try next URL */
-        }
-      }
-      if (!cancelled) setLoading(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
+    fetch(GEO_URL)
+      .then((r) => r.json())
+      .then((data) => { if (!cancelled) { setFeatures(data.features ?? []); setLoading(false); } })
+      .catch(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, []);
 
   const hoveredName =
