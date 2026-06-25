@@ -54,6 +54,9 @@ export default function NigeriaMap() {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
       }).addTo(map);
 
+      // Re-measure container after paint in case the reveal animation delayed layout
+      setTimeout(() => { if (!cancelled && mapRef.current) mapRef.current.invalidateSize(); }, 300);
+
       // Try each GeoJSON source in order
       let geoLoaded = false;
       for (const url of GEO_URLS) {
