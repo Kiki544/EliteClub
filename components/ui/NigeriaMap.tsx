@@ -1,144 +1,183 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import type { Map as LMap } from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useState } from "react";
 import { STATES } from "@/lib/data";
 import { Users, X } from "@phosphor-icons/react";
 
 type StateData = (typeof STATES)[0];
+
+type GeoFeature = {
+  properties: Record<string, unknown>;
+  geometry: {
+    type: "Polygon" | "MultiPolygon";
+    coordinates: number[][][] | number[][][][];
+  };
+};
 
 const GEO_URLS = [
   "https://raw.githubusercontent.com/wmgeolab/geoBoundaries/main/releaseData/gbOpen/NGA/ADM1/geoBoundaries-NGA-ADM1.geojson",
   "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/nigeria.geojson",
 ];
 
-const STATE_COORDS: Record<string, [number, number]> = {
-  Lagos: [6.5244, 3.3792],
-  Kwara: [8.4966, 4.5418],
-  Ogun: [7.1475, 3.3503],
-  Kano: [12.0022, 8.5167],
-  Enugu: [6.4584, 7.4951],
-  Benue: [7.7322, 8.5338],
-  Ondo: [7.2526, 5.2103],
-  Sokoto: [13.0596, 5.2338],
-};
+// Nigeria bounding box (degrees)
+const LON_MIN = 2.668, LON_MAX = 14.680;
+const LAT_MIN = 4.272, LAT_MAX = 13.892;
+const W = 800, H = 620, PAD = 14;
+
+function project(lon: number, lat: number): [number, number] {
+  const x = PAD + ((lon - LON_MIN) / (LON_MAX - LON_MIN)) * (W - 2 * PAD);
+  const y = PAD + ((LAT_MAX - lat) / (LAT_MAX - LAT_MIN)) * (H - 2 * PAD);
+  return [x, y];
+}
+
+function toPath(geometry: GeoFeature["geometry"]): string {
+  const ringToD = (ring: number[][]) =>
+    ring
+      .map(([lon, lat], i) => {
+        const [x, y] = project(lon, lat);
+        return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .join("") + "Z";
+
+  if (geometry.type === "Polygon") {
+    return (geometry.coordinates as number[][][]).map(ringToD).join(" ");
+  }
+  return (geometry.coordinates as number[][][][])
+    .flatMap((poly) => poly.map(ringToD))
+    .join(" ");
+}
 
 function normalize(name: string) {
   return name.toLowerCase().replace(/\s+state$/i, "").trim();
 }
 
+function getStateName(props: Record<string, unknown>): string {
+  const keys = ["shapeName", "name", "NAME_1", "admin1Name", "State", "STATE", "ADM1_EN"];
+  for (const k of keys) {
+    if (typeof props[k] === "string" && props[k]) return props[k] as string;
+  }
+  return "";
+}
+
 export default function NigeriaMap() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<LMap | null>(null);
+  const [features, setFeatures] = useState<GeoFeature[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<StateData | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
-    // Guard: never init twice on the same container
-    if (!containerRef.current || mapRef.current) return;
-
     let cancelled = false;
-
     (async () => {
-      const L = (await import("leaflet")).default;
-      if (cancelled || !containerRef.current || mapRef.current) return;
-
-      const map = L.map(containerRef.current, {
-        center: [9, 8],
-        zoom: 6,
-        scrollWheelZoom: false,
-      });
-      mapRef.current = map;
-
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }).addTo(map);
-
-      // Re-measure container after paint in case the reveal animation delayed layout
-      setTimeout(() => { if (!cancelled && mapRef.current) mapRef.current.invalidateSize(); }, 300);
-
-      // Try each GeoJSON source in order
-      let geoLoaded = false;
       for (const url of GEO_URLS) {
         try {
           const res = await fetch(url);
           if (!res.ok || cancelled) continue;
           const data = await res.json();
-          if (cancelled || !mapRef.current) break;
-
-          L.geoJSON(data, {
-            style: (feature) => {
-              const raw = (feature?.properties?.shapeName ?? feature?.properties?.name ?? "") as string;
-              const isActive = STATES.some((s) => normalize(s.name) === normalize(raw));
-              return {
-                fillColor: isActive ? "#16a34a" : "#d1fae5",
-                fillOpacity: isActive ? 0.65 : 0.35,
-                color: "#6ee7b7",
-                weight: 1,
-              };
-            },
-            onEachFeature: (feature, layer) => {
-              const raw = (feature.properties?.shapeName ?? feature.properties?.name ?? "") as string;
-              const match = STATES.find((s) => normalize(s.name) === normalize(raw));
-              if (!match) return;
-              layer.bindTooltip(match.name, { sticky: true });
-              layer.on("click", () => {
-                if (!cancelled) setSelected((prev) => (prev?.name === match.name ? null : match));
-              });
-            },
-          }).addTo(map);
-
-          geoLoaded = true;
-          break;
-        } catch { /* try next URL */ }
+          if (!cancelled) {
+            setFeatures(data.features ?? []);
+            setLoading(false);
+          }
+          return;
+        } catch {
+          /* try next URL */
+        }
       }
-
-      // Fallback: circle markers at state centroids
-      if (!geoLoaded && !cancelled && mapRef.current) {
-        STATES.forEach((state) => {
-          const coords = STATE_COORDS[state.name];
-          if (!coords || !mapRef.current) return;
-          L.circleMarker(coords, {
-            radius: 14,
-            fillColor: "#16a34a",
-            color: "#15803d",
-            fillOpacity: 0.85,
-            weight: 2,
-          })
-            .bindTooltip(state.name, { sticky: true })
-            .on("click", () => {
-              if (!cancelled) setSelected((prev) => (prev?.name === state.name ? null : state));
-            })
-            .addTo(map);
-        });
-      }
+      if (!cancelled) setLoading(false);
     })();
-
     return () => {
       cancelled = true;
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
     };
   }, []);
 
+  const hoveredName =
+    hovered
+      ? (STATES.find((s) => normalize(s.name) === normalize(hovered))?.name ?? hovered)
+      : null;
+
   return (
     <div className="flex flex-col gap-4">
-      <div className="relative">
-        <div
-          ref={containerRef}
-          className="rounded-card overflow-hidden border border-green-200 shadow-sm w-full"
-          style={{ height: 500 }}
-        />
+      <div className="relative rounded-card overflow-hidden border border-green-200 shadow-sm bg-[#e8f5ee]">
+        {loading ? (
+          <div className="flex items-center justify-center h-[480px]">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-7 h-7 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
+              <p className="text-green-700 text-sm">Loading map…</p>
+            </div>
+          </div>
+        ) : features.length === 0 ? (
+          <div className="flex items-center justify-center h-[480px] text-green-600 text-sm">
+            Map data unavailable
+          </div>
+        ) : (
+          <svg
+            viewBox={`0 0 ${W} ${H}`}
+            className="w-full block"
+            onMouseMove={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+            }}
+            onMouseLeave={() => {
+              setHovered(null);
+              setMousePos(null);
+            }}
+          >
+            {features.map((feat, i) => {
+              const raw = getStateName(feat.properties);
+              const match = STATES.find((s) => normalize(s.name) === normalize(raw));
+              const isActive = !!match;
+              const isHovered = hovered === raw;
+              const isSelected = !!match && selected?.name === match.name;
+
+              return (
+                <path
+                  key={i}
+                  d={toPath(feat.geometry)}
+                  fill={
+                    isSelected
+                      ? "#15803d"
+                      : isActive
+                      ? isHovered
+                        ? "#16a34a"
+                        : "#4ade80"
+                      : isHovered
+                      ? "#bbf7d0"
+                      : "#d1fae5"
+                  }
+                  stroke="#16a34a"
+                  strokeWidth={isSelected ? 2 : 0.6}
+                  strokeLinejoin="round"
+                  style={{ cursor: isActive ? "pointer" : "default", transition: "fill 0.1s" }}
+                  onMouseEnter={() => setHovered(raw)}
+                  onMouseLeave={() => setHovered(null)}
+                  onClick={() => {
+                    if (!match) return;
+                    setSelected((prev) => (prev?.name === match.name ? null : match));
+                  }}
+                />
+              );
+            })}
+          </svg>
+        )}
+
+        {/* Hover tooltip */}
+        {hovered && mousePos && hoveredName && (
+          <div
+            className="absolute pointer-events-none z-10 bg-green-900/90 text-white text-xs font-semibold px-2.5 py-1 rounded-lg shadow-lg"
+            style={{ left: mousePos.x + 14, top: mousePos.y - 10 }}
+          >
+            {hoveredName}
+          </div>
+        )}
+
         {/* Legend */}
-        <div className="absolute bottom-4 left-4 z-[1000] bg-white/90 backdrop-blur-sm rounded-lg border border-green-200 p-3 text-xs flex flex-col gap-1.5 shadow-sm pointer-events-none">
+        <div className="absolute bottom-4 left-4 z-10 bg-white/90 backdrop-blur-sm rounded-lg border border-green-200 p-3 text-xs flex flex-col gap-1.5 shadow-sm pointer-events-none">
           <div className="flex items-center gap-2">
-            <span className="w-4 h-4 rounded-sm bg-green-600 border border-green-400 flex-shrink-0" />
+            <span className="w-4 h-4 rounded-sm bg-green-400 border border-green-600 flex-shrink-0" />
             <span className="text-green-800 font-medium">Active programme state</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-4 h-4 rounded-sm bg-green-100 border border-green-300 flex-shrink-0" />
+            <span className="w-4 h-4 rounded-sm bg-green-100 border border-green-400 flex-shrink-0" />
             <span className="text-green-600">Not yet active</span>
           </div>
         </div>
@@ -170,7 +209,10 @@ export default function NigeriaMap() {
           </div>
           <div className="flex flex-wrap gap-1.5 mb-3">
             {selected.programmes.map((p) => (
-              <span key={p} className="px-2.5 py-0.5 rounded-pill bg-green-700 text-white text-xs font-semibold">
+              <span
+                key={p}
+                className="px-2.5 py-0.5 rounded-pill bg-green-700 text-white text-xs font-semibold"
+              >
                 {p}
               </span>
             ))}
