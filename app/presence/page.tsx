@@ -1,7 +1,17 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import { STATES, STATS } from "@/lib/data";
 import { MapPin, Users } from "@phosphor-icons/react/dist/ssr";
+
+const NigeriaMap = dynamic(() => import("@/components/ui/NigeriaMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="rounded-card bg-green-50 border border-green-200 h-96 flex items-center justify-center">
+      <p className="text-green-500 text-sm animate-pulse">Loading map…</p>
+    </div>
+  ),
+});
 
 export const metadata: Metadata = { title: "Where We Work" };
 
@@ -54,13 +64,7 @@ export default function PresencePage() {
             </h2>
           </RevealOnScroll>
           <RevealOnScroll delay={0.05}>
-            <div className="rounded-card bg-green-50 border-2 border-dashed border-green-300 h-96 flex flex-col items-center justify-center text-center p-8">
-              <MapPin size={48} className="text-green-400 mb-4" weight="duotone" />
-              <p className="font-display font-bold text-green-700 text-xl mb-2">Interactive Nigeria Map</p>
-              <p className="text-text-muted text-sm max-w-[40ch]">
-                An interactive map with clickable state markers will be integrated here (recommend: react-leaflet or Mapbox GL JS). Clicking each state will open a panel showing active programmes, beneficiary count, and the state representative.
-              </p>
-            </div>
+            <NigeriaMap />
           </RevealOnScroll>
         </div>
       </section>
