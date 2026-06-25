@@ -377,6 +377,7 @@ export const GALLERY_CAMPAIGNS = [
 ];
 
 export const VIDEOS = [
+  { title: "YEDIS Artisan Empowerment Workshop – Aagba 2024", youtubeId: "0I13GiY584I", theme: "Empowerment" },
   { title: "Our WASH Programme in Action", youtubeId: "dQw4w9WgXcQ", theme: "WASH" },
   { title: "Stories from the Scholarship Programme", youtubeId: "dQw4w9WgXcQ", theme: "Education" },
   { title: "Elite Club of Aagba - Who We Are", youtubeId: "dQw4w9WgXcQ", theme: "About" },
