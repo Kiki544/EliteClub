@@ -1,21 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, CircleMarker, Popup } from "react-leaflet";
-import type { PathOptions, Layer } from "leaflet";
-import L from "leaflet";
-import type { Feature } from "geojson";
+import { useEffect, useRef, useState } from "react";
+import type { Map as LMap } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { STATES } from "@/lib/data";
 import { Users, X } from "@phosphor-icons/react";
 
-// Try geoBoundaries first, fall back to click_that_hood
+type StateData = (typeof STATES)[0];
+
 const GEO_URLS = [
   "https://raw.githubusercontent.com/wmgeolab/geoBoundaries/main/releaseData/gbOpen/NGA/ADM1/geoBoundaries-NGA-ADM1.geojson",
   "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/nigeria.geojson",
 ];
 
-// Centroid fallbacks [lat, lng] used when GeoJSON cannot load
 const STATE_COORDS: Record<string, [number, number]> = {
   Lagos: [6.5244, 3.3792],
   Kwara: [8.4966, 4.5418],
@@ -27,108 +24,112 @@ const STATE_COORDS: Record<string, [number, number]> = {
   Sokoto: [13.0596, 5.2338],
 };
 
-type StateData = (typeof STATES)[0];
-
 function normalize(name: string) {
   return name.toLowerCase().replace(/\s+state$/i, "").trim();
 }
 
 export default function NigeriaMap() {
-  const [geoData, setGeoData] = useState<object | null>(null);
-  const [useMarkers, setUseMarkers] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<LMap | null>(null);
   const [selected, setSelected] = useState<StateData | null>(null);
 
   useEffect(() => {
+    // Guard: never init twice on the same container
+    if (!containerRef.current || mapRef.current) return;
+
     let cancelled = false;
-    async function load() {
+
+    (async () => {
+      const L = (await import("leaflet")).default;
+      if (cancelled || !containerRef.current || mapRef.current) return;
+
+      const map = L.map(containerRef.current, {
+        center: [9, 8],
+        zoom: 6,
+        scrollWheelZoom: false,
+      });
+      mapRef.current = map;
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+
+      // Try each GeoJSON source in order
+      let geoLoaded = false;
       for (const url of GEO_URLS) {
         try {
           const res = await fetch(url);
-          if (!res.ok) continue;
+          if (!res.ok || cancelled) continue;
           const data = await res.json();
-          if (!cancelled) { setGeoData(data); return; }
-        } catch { /* try next */ }
+          if (cancelled || !mapRef.current) break;
+
+          L.geoJSON(data, {
+            style: (feature) => {
+              const raw = (feature?.properties?.shapeName ?? feature?.properties?.name ?? "") as string;
+              const isActive = STATES.some((s) => normalize(s.name) === normalize(raw));
+              return {
+                fillColor: isActive ? "#16a34a" : "#d1fae5",
+                fillOpacity: isActive ? 0.65 : 0.35,
+                color: "#6ee7b7",
+                weight: 1,
+              };
+            },
+            onEachFeature: (feature, layer) => {
+              const raw = (feature.properties?.shapeName ?? feature.properties?.name ?? "") as string;
+              const match = STATES.find((s) => normalize(s.name) === normalize(raw));
+              if (!match) return;
+              layer.bindTooltip(match.name, { sticky: true });
+              layer.on("click", () => {
+                if (!cancelled) setSelected((prev) => (prev?.name === match.name ? null : match));
+              });
+            },
+          }).addTo(map);
+
+          geoLoaded = true;
+          break;
+        } catch { /* try next URL */ }
       }
-      if (!cancelled) setUseMarkers(true);
-    }
-    load();
-    return () => { cancelled = true; };
-  }, []);
 
-  const activeNames = new Set(STATES.map((s) => normalize(s.name)));
+      // Fallback: circle markers at state centroids
+      if (!geoLoaded && !cancelled && mapRef.current) {
+        STATES.forEach((state) => {
+          const coords = STATE_COORDS[state.name];
+          if (!coords || !mapRef.current) return;
+          L.circleMarker(coords, {
+            radius: 14,
+            fillColor: "#16a34a",
+            color: "#15803d",
+            fillOpacity: 0.85,
+            weight: 2,
+          })
+            .bindTooltip(state.name, { sticky: true })
+            .on("click", () => {
+              if (!cancelled) setSelected((prev) => (prev?.name === state.name ? null : state));
+            })
+            .addTo(map);
+        });
+      }
+    })();
 
-  function styleFeature(feature?: Feature): PathOptions {
-    const raw = (feature?.properties?.shapeName ?? feature?.properties?.name ?? "") as string;
-    const isActive = activeNames.has(normalize(raw));
-    return {
-      fillColor: isActive ? "#16a34a" : "#d1fae5",
-      fillOpacity: isActive ? 0.65 : 0.35,
-      color: "#6ee7b7",
-      weight: 1,
+    return () => {
+      cancelled = true;
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
     };
-  }
-
-  function onEachFeature(feature: Feature, layer: Layer) {
-    const raw = (feature.properties?.shapeName ?? feature.properties?.name ?? "") as string;
-    const match = STATES.find((s) => normalize(s.name) === normalize(raw));
-    if (!match) return;
-    (layer as L.Path).bindTooltip(match.name, { sticky: true, direction: "top" });
-    layer.on("click", () =>
-      setSelected((prev) => (prev?.name === match.name ? null : match))
-    );
-  }
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Map */}
-      <div className="relative rounded-card overflow-hidden border border-green-200 shadow-sm" style={{ height: 500 }}>
-        <MapContainer
-          center={[9, 8]}
-          zoom={6}
-          scrollWheelZoom={false}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          />
-
-          {geoData && (
-            <GeoJSON
-              key="nga-states"
-              data={geoData as never}
-              style={styleFeature}
-              onEachFeature={onEachFeature}
-            />
-          )}
-
-          {useMarkers &&
-            STATES.map((state) => {
-              const coords = STATE_COORDS[state.name];
-              if (!coords) return null;
-              return (
-                <CircleMarker
-                  key={state.name}
-                  center={coords}
-                  radius={14}
-                  pathOptions={{ fillColor: "#16a34a", color: "#15803d", fillOpacity: 0.85, weight: 2 }}
-                  eventHandlers={{ click: () => setSelected((p) => (p?.name === state.name ? null : state)) }}
-                >
-                  <Popup><strong>{state.name} State</strong></Popup>
-                </CircleMarker>
-              );
-            })}
-        </MapContainer>
-
-        {/* Loading overlay */}
-        {!geoData && !useMarkers && (
-          <div className="absolute inset-0 bg-green-50/80 flex items-center justify-center z-[1000] pointer-events-none">
-            <p className="text-green-600 text-sm animate-pulse">Loading Nigeria map…</p>
-          </div>
-        )}
-
+      <div className="relative">
+        <div
+          ref={containerRef}
+          className="rounded-card overflow-hidden border border-green-200 shadow-sm w-full"
+          style={{ height: 500 }}
+        />
         {/* Legend */}
-        <div className="absolute bottom-8 left-4 z-[1000] bg-white/90 backdrop-blur-sm rounded-lg border border-green-200 p-3 text-xs flex flex-col gap-1.5 shadow-sm">
+        <div className="absolute bottom-4 left-4 z-[1000] bg-white/90 backdrop-blur-sm rounded-lg border border-green-200 p-3 text-xs flex flex-col gap-1.5 shadow-sm pointer-events-none">
           <div className="flex items-center gap-2">
             <span className="w-4 h-4 rounded-sm bg-green-600 border border-green-400 flex-shrink-0" />
             <span className="text-green-800 font-medium">Active programme state</span>
@@ -140,12 +141,14 @@ export default function NigeriaMap() {
         </div>
       </div>
 
-      {/* State info panel (shown below map on click) */}
+      {/* State info panel */}
       {selected && (
         <div className="rounded-card border border-green-200 bg-white p-5 shadow-sm">
           <div className="flex items-start justify-between gap-4 mb-3">
             <div>
-              <p className="font-display font-bold text-green-900 text-lg leading-tight">{selected.name} State</p>
+              <p className="font-display font-bold text-green-900 text-lg leading-tight">
+                {selected.name} State
+              </p>
               <p className="text-green-500 text-xs mt-0.5">Rep: {selected.representative}</p>
             </div>
             <button
