@@ -383,6 +383,55 @@ export const VIDEOS = [
   { title: "Elite Club of Aagba - Who We Are", youtubeId: "dQw4w9WgXcQ", theme: "About" },
 ];
 
+export const MEMBERS = [
+  // Osun — home base
+  { name: "Obafemi Okediya",   state: "Osun",   role: "Club President",     yearJoined: 2012, image: "https://picsum.photos/seed/mem-osun-1/300/300" },
+  { name: "[Member Name]",     state: "Osun",   role: "State Coordinator",  yearJoined: 2013, image: "https://picsum.photos/seed/mem-osun-2/300/300" },
+  { name: "[Member Name]",     state: "Osun",   role: "Secretary",          yearJoined: 2016, image: "https://picsum.photos/seed/mem-osun-3/300/300" },
+  { name: "[Member Name]",     state: "Osun",   role: "Member",             yearJoined: 2019, image: "https://picsum.photos/seed/mem-osun-4/300/300" },
+  { name: "[Member Name]",     state: "Osun",   role: "Member",             yearJoined: 2021, image: "https://picsum.photos/seed/mem-osun-5/300/300" },
+  // Lagos
+  { name: "[Member Name]",     state: "Lagos",  role: "State Coordinator",  yearJoined: 2014, image: "https://picsum.photos/seed/mem-lagos-1/300/300" },
+  { name: "[Member Name]",     state: "Lagos",  role: "Vice Coordinator",   yearJoined: 2015, image: "https://picsum.photos/seed/mem-lagos-2/300/300" },
+  { name: "[Member Name]",     state: "Lagos",  role: "Treasurer",          yearJoined: 2017, image: "https://picsum.photos/seed/mem-lagos-3/300/300" },
+  { name: "[Member Name]",     state: "Lagos",  role: "Member",             yearJoined: 2020, image: "https://picsum.photos/seed/mem-lagos-4/300/300" },
+  // Kwara
+  { name: "[Member Name]",     state: "Kwara",  role: "State Coordinator",  yearJoined: 2015, image: "https://picsum.photos/seed/mem-kwara-1/300/300" },
+  { name: "[Member Name]",     state: "Kwara",  role: "Secretary",          yearJoined: 2016, image: "https://picsum.photos/seed/mem-kwara-2/300/300" },
+  { name: "[Member Name]",     state: "Kwara",  role: "Member",             yearJoined: 2018, image: "https://picsum.photos/seed/mem-kwara-3/300/300" },
+  { name: "[Member Name]",     state: "Kwara",  role: "Member",             yearJoined: 2022, image: "https://picsum.photos/seed/mem-kwara-4/300/300" },
+  // Ogun
+  { name: "[Member Name]",     state: "Ogun",   role: "State Coordinator",  yearJoined: 2014, image: "https://picsum.photos/seed/mem-ogun-1/300/300" },
+  { name: "[Member Name]",     state: "Ogun",   role: "Vice Coordinator",   yearJoined: 2016, image: "https://picsum.photos/seed/mem-ogun-2/300/300" },
+  { name: "[Member Name]",     state: "Ogun",   role: "Member",             yearJoined: 2019, image: "https://picsum.photos/seed/mem-ogun-3/300/300" },
+  { name: "[Member Name]",     state: "Ogun",   role: "Member",             yearJoined: 2021, image: "https://picsum.photos/seed/mem-ogun-4/300/300" },
+  // Kano
+  { name: "[Member Name]",     state: "Kano",   role: "State Coordinator",  yearJoined: 2016, image: "https://picsum.photos/seed/mem-kano-1/300/300" },
+  { name: "[Member Name]",     state: "Kano",   role: "Treasurer",          yearJoined: 2017, image: "https://picsum.photos/seed/mem-kano-2/300/300" },
+  { name: "[Member Name]",     state: "Kano",   role: "Member",             yearJoined: 2019, image: "https://picsum.photos/seed/mem-kano-3/300/300" },
+  { name: "[Member Name]",     state: "Kano",   role: "Member",             yearJoined: 2023, image: "https://picsum.photos/seed/mem-kano-4/300/300" },
+  // Enugu
+  { name: "[Member Name]",     state: "Enugu",  role: "State Coordinator",  yearJoined: 2015, image: "https://picsum.photos/seed/mem-enugu-1/300/300" },
+  { name: "[Member Name]",     state: "Enugu",  role: "Secretary",          yearJoined: 2017, image: "https://picsum.photos/seed/mem-enugu-2/300/300" },
+  { name: "[Member Name]",     state: "Enugu",  role: "Member",             yearJoined: 2020, image: "https://picsum.photos/seed/mem-enugu-3/300/300" },
+  { name: "[Member Name]",     state: "Enugu",  role: "Member",             yearJoined: 2022, image: "https://picsum.photos/seed/mem-enugu-4/300/300" },
+  // Benue
+  { name: "[Member Name]",     state: "Benue",  role: "State Coordinator",  yearJoined: 2017, image: "https://picsum.photos/seed/mem-benue-1/300/300" },
+  { name: "[Member Name]",     state: "Benue",  role: "Vice Coordinator",   yearJoined: 2018, image: "https://picsum.photos/seed/mem-benue-2/300/300" },
+  { name: "[Member Name]",     state: "Benue",  role: "Member",             yearJoined: 2020, image: "https://picsum.photos/seed/mem-benue-3/300/300" },
+  { name: "[Member Name]",     state: "Benue",  role: "Member",             yearJoined: 2023, image: "https://picsum.photos/seed/mem-benue-4/300/300" },
+  // Ondo
+  { name: "[Member Name]",     state: "Ondo",   role: "State Coordinator",  yearJoined: 2016, image: "https://picsum.photos/seed/mem-ondo-1/300/300" },
+  { name: "[Member Name]",     state: "Ondo",   role: "Treasurer",          yearJoined: 2018, image: "https://picsum.photos/seed/mem-ondo-2/300/300" },
+  { name: "[Member Name]",     state: "Ondo",   role: "Member",             yearJoined: 2020, image: "https://picsum.photos/seed/mem-ondo-3/300/300" },
+  { name: "[Member Name]",     state: "Ondo",   role: "Member",             yearJoined: 2022, image: "https://picsum.photos/seed/mem-ondo-4/300/300" },
+  // Sokoto
+  { name: "[Member Name]",     state: "Sokoto", role: "State Coordinator",  yearJoined: 2017, image: "https://picsum.photos/seed/mem-sokoto-1/300/300" },
+  { name: "[Member Name]",     state: "Sokoto", role: "Secretary",          yearJoined: 2019, image: "https://picsum.photos/seed/mem-sokoto-2/300/300" },
+  { name: "[Member Name]",     state: "Sokoto", role: "Member",             yearJoined: 2021, image: "https://picsum.photos/seed/mem-sokoto-3/300/300" },
+  { name: "[Member Name]",     state: "Sokoto", role: "Member",             yearJoined: 2023, image: "https://picsum.photos/seed/mem-sokoto-4/300/300" },
+];
+
 export const SDG_GOALS = [
   { number: 4, title: "Quality Education", color: "#C5192D", description: "Scholarships and school infrastructure" },
   { number: 6, title: "Clean Water and Sanitation", color: "#26BDE2", description: "Boreholes and sanitation facilities" },

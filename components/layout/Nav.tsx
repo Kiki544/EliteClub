@@ -17,6 +17,7 @@ const NAV_GROUPS: NavGroup[] = [
     children: [
       { href: "/about", label: "About Us" },
       { href: "/team", label: "Our Team" },
+      { href: "/members", label: "Members" },
       { href: "/contact", label: "Contact Us" },
     ],
   },
@@ -46,6 +47,7 @@ const MOBILE_LINKS: NavChild[] = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About Us" },
   { href: "/team", label: "Our Team" },
+  { href: "/members", label: "Members" },
   { href: "/programmes", label: "All Programmes" },
   { href: "/presence", label: "Where We Work" },
   { href: "/impact", label: "Impact & Results" },
